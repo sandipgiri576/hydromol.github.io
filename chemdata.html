@@ -57,8 +57,8 @@ function goBack() {
         <div class="jmol-container">
             <script type="text/javascript">
                 var Info = {
-                    width: 500,
-                    height: 500,
+                    width: 400,
+                    height: 400,
                     serverURL: "static/jsmol/php/jsmol.php",
                     use: "HTML5",
                     j2sPath: "static/jsmol/j2s",
@@ -67,6 +67,7 @@ function goBack() {
                 var jmolApplet0 = Jmol.getApplet("jmolApplet0", Info);
             </script>
             <div id="jmolApplet0_infodiv"></div>
+            <button id="download-xyz-btn">Download XYZ File</button>
         </div>
     </div>
     <script src="chemdata.js"></script>
