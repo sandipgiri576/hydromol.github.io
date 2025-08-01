@@ -1,7 +1,6 @@
 $(document).ready(function() {
     const searchInput = new URLSearchParams(window.location.search).get('search-input');
 
-    // Define a mapping for property names
     const propertyNameMap = {
         'smiles_format': 'SMILE',
         'formula': 'Formula',
@@ -24,30 +23,17 @@ $(document).ready(function() {
         'Gibbsfreeenergy': 'Gibbs free energy(Eh)'    
     };
 
+    let currentMolecule = null; // Store the currently displayed molecule
+
     $.getJSON('hyd.json', function(data) {
         const tableBody = $('#molecule-table tbody');
         const molecule = data.find(function(molecule) {
             return molecule.smiles_format.toLowerCase() === searchInput.toLowerCase();
         });
 
-        // if (molecule) {
-        //     const row = $('<tr>');
-        //     const mappedName = propertyNameMap[key] || key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
-        //     row.append($('<th>').text('smiles_format'));
-        //     row.append($('<td>').text(molecule.smiles_format));
-        //     tableBody.append(row);
-
-        //     Object.entries(molecule).forEach(function([key, value]) {
-        //         if (key !== 'smiles_format') {
-        //             const row = $('<tr>');
-        //             row.append($('<th>').text(key.charAt(0).toUpperCase() + key.slice(1)));
-        //             row.append($('<td>').text(value));
-        //             tableBody.append(row);
-        //         }
-        //     });
-
         if (molecule) {
-            tableBody.empty(); // Clear existing content
+            currentMolecule = molecule; // Save for download
+            tableBody.empty();
 
             Object.entries(molecule).forEach(function([key, value]) {
                 const row = $('<tr>');
@@ -57,7 +43,6 @@ $(document).ready(function() {
                 tableBody.append(row);
             });
 
-            // Automatically load the structure
             if (molecule.structure) {
                 var filePath = "static/structure/" + molecule.structure;
                 Jmol.script(jmolApplet0, 'load ' + filePath);
@@ -66,7 +51,19 @@ $(document).ready(function() {
             window.location.href = '404.html';
         }
     });
+
+    // Download XYZ button logic
+    $('#download-xyz-btn').click(function() {
+        if (!currentMolecule || !currentMolecule.structure) {
+            alert('No XYZ structure file available for download.');
+            return;
+        }
+        var filePath = "static/structure/" + currentMolecule.structure;
+        var downloadAnchor = document.createElement('a');
+        downloadAnchor.href = filePath;
+        downloadAnchor.download = currentMolecule.structure; 
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        document.body.removeChild(downloadAnchor);
+    });
 });
-
-
-
